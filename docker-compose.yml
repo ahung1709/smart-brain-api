@@ -1,0 +1,49 @@
+# version: '2.27.0'
+version: '3.6'
+
+services:
+
+  # Backend API
+  smart-brain-api:
+    container_name: backend
+    # image: node:8.11.1
+    build: ./
+    command: npm start
+    working_dir: /usr/src/smart-brain-api
+    environment:
+      CLARIFAI_API_KEY: ${ENV_CLARIFAI_API_KEY}
+      POSTGRES_URI: postgres://sally:secret@postgres:5432/smart-brain-docker
+      # POSTGRES_USER: sally
+      # POSTGRES_PASSWORD: secret
+      # POSTGRES_DB: smart-brain-docker
+      # POSTGRES_HOST: postgres
+      REDIS_URI: redis://redis:6379
+    # links:
+    #   - postgres
+    links:
+      - redis
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/usr/src/smart-brain-api
+
+  # Postgres
+  postgres:
+    # container_name: postgres
+    environment:
+      POSTGRES_USER: sally
+      POSTGRES_PASSWORD: secret
+      POSTGRES_URL: postgres://sally:secret@localhost:5432/smart-brain-docker
+      POSTGRES_DB: smart-brain-docker
+      POSTGRES_HOST: postgres
+      # POSTGRES_HOST_AUTH_METHOD: password
+    build: ./postgres
+    # image: postgres
+    ports:
+      - "5432:5432"
+  
+  # Redis
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
