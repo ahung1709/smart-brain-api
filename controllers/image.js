@@ -2,7 +2,7 @@ const Clarifai = require('clarifai');
 
 //You must add your own API key here from Clarifai. 
 const app = new Clarifai.App({
- apiKey: 'YOUR API KEY HERE' 
+  apiKey: process.env.CLARIFAI_API_KEY
 });
 
 const handleApiCall = (req, res) => {
@@ -10,9 +10,10 @@ const handleApiCall = (req, res) => {
   // A good way to check if the model you are using is up, is to check them on the clarifai website. For example,
   // for the Face Detect Mode: https://www.clarifai.com/models/face-detection
   // If that isn't working, then that means you will have to wait until their servers are back up. 
-
+  console.log("handleApiCall req.body:", req.body)
   app.models.predict('face-detection', req.body.input)
     .then(data => {
+      console.log(data)
       res.json(data);
     })
     .catch(err => res.status(400).json('unable to work with API'))
